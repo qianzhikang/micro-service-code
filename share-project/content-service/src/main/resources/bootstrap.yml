@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: content-service
+  cloud:
+    nacos:
+      discovery:
+        namespace: dev
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+        namespace: dev
+        group: DEFAULT_GROUP
+        timeout: 5000
+        config-long-poll-timeout: 10000
+        config-retry-time: 2000
+        max-retry: 3
+        refresh-enabled: true
+#    sentinel:
+#      transport:
+#        dashboard: localhost:8080
+#        port: 8719
+#      web-context-unify: false

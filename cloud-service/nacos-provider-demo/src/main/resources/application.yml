@@ -1,0 +1,12 @@
+server:
+  port: 0
+spring:
+  application:
+    name: cloud-goods-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      username: nacos
+      password: nacos
+

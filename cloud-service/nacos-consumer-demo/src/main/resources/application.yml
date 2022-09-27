@@ -1,0 +1,13 @@
+server:
+  port: 8093
+# ????
+spring:
+  application:
+    name: cloud-consumer-service
+  # ???????? nacos
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      username: nacos
+      password: nacos

@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: content-service
+  cloud:
+    nacos:
+      discovery:
+        namespace: dev
+        server-addr: 124.221.233.62:8848
+      config:
+        server-addr: 124.221.233.62:8848
+        file-extension: yml
+        namespace: dev
+        group: DEFAULT_GROUP
+        timeout: 5000
+        config-long-poll-timeout: 10000
+        config-retry-time: 2000
+        max-retry: 3
+        refresh-enabled: true

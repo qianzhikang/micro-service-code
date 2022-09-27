@@ -1,0 +1,10 @@
+server:
+  port: 8082
+
+#spring:
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 124.221.233.62:8848
+#      username: nacos
+#      password: nacos

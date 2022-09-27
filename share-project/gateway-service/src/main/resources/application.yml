@@ -1,0 +1,30 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: gateway-service  #应用名称
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true   #开启网关服务
+          lower-case-service-id: true
+      routes:   # 网关服务路由配置
+        - id: user-service   # 服务id
+          order: 1      #优先级
+          predicates:   #规则定义
+            - Path=/users/**
+          uri: http://localhost:8081   #服务url
+        - id: content-service
+          order: 1
+          predicates:
+            - Path=/content/**
+          uri: http://localhost:8082
+    nacos:         #nacos配置
+      discovery:
+        namespace: dev  #命名空间
+        server-addr: localhost:8848   #nacos端口
+      password: nacos
+      username: nacos
+

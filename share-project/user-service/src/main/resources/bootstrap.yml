@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: user-service                   # 应用名
+  cloud:
+    nacos:
+      discovery:
+        namespace: dev                   # nacos订阅服务启动的位置，默认为public
+      config:
+        server-addr: localhost:8848      # nacos服务的url
+        file-extension: yml              # 配置的文件类型
+        namespace: dev                   # 配置文件所在的命名空间，必须和远程配置所在的命名空间相同
+        group: DEFAULT_GROUP             # 配置文件的组，默认DEFAULT_GROUP
+        timeout: 5000                    # 链接超时配置
+        config-long-poll-timeout: 10000
+        config-retry-time: 2000
+        max-retry: 3
+        refresh-enabled: true            # 启动热读取，默认关闭
+#    sentinel:
+#      transport:
+#        dashboard: localhost:8080
+#        port: 8719
