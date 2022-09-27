@@ -1,4 +1,4 @@
-/share-single/upload-service/src/main/resources/aliyun.properties
+share-single/upload-service/src/main/resources/aliyun.properties
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
