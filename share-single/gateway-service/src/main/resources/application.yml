@@ -2,40 +2,43 @@ server:
   port: 8083
 
 spring:
-  application:
-    name: gateway-service                            # ????
   cloud:
-    nacos:                                           # nacos??
-      discovery:
-        namespace: dev                               # ????
-        server-addr: 124.221.233.62:8848             # nacos??
-    gateway:
-      discovery:
-        locator:
-          enabled: true                              # ??????
-          lower-case-service-id: true
-      routes:                                        # ????????
-        - id: user-service                           # ??id
-          order: 1                                   # ???
-          predicates:                                # ????
-            - Path=/api/v1/users/**
-#          uri: lb://user-service                    # ??url???????????lb ??????????????
-          uri: http://localhost:8081                 # ??url
-          filters:                                   # ????
-            - StripPrefix=2                          # ???????'/'
-        - id: content-service
-          order: 1
-          predicates:
-            - Path=/api/v1/content/**
-          uri: http://localhost:8082
-          filters:
-            - StripPrefix=2
-        - id: notice-service
-          order: 1
-          predicates:
-            - Path=/api/v1/notices/**
-          uri: http://localhost:8084
-          filters:
-            - StripPrefix=2
+    nacos:
+      discovery:                                     # nacos注册服务
+        namespace: dev                               # 命名空间
+        server-addr: 124.221.233.62:8848             # nacos地址
+        heart-beat-interval: 5000
+        heart-beat-timeout: 20000
+        register-enabled: true
+        username: nacos
+        password: nacos
+#    gateway:
+#      discovery:
+#        locator:
+#          enabled: true                              # 开启
+#          lower-case-service-id: true
+#      routes:                                        # 路由配置
+#        - id: user-service                           # id
+#          order: 1                                   # 优先级
+#          predicates:
+#            - Path=/api/v1/users/**
+##          uri: lb://user-service
+#          uri: http://localhost:8081
+#          filters:                                   # 过滤
+#            - StripPrefix=2                          # 去掉两层'/'
+#        - id: content-service
+#          order: 1
+#          predicates:
+#            - Path=/api/v1/content/**
+#          uri: http://localhost:8082
+#          filters:
+#            - StripPrefix=2
+#        - id: notice-service
+#          order: 1
+#          predicates:
+#            - Path=/api/v1/notices/**
+#          uri: http://localhost:8084
+#          filters:
+#            - StripPrefix=2
 
 
