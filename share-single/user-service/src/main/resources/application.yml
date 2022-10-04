@@ -1,3 +1,7 @@
 server:
   port: 8081
 
+jwt:
+  secret: qzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzk   # 密码
+  expire-time-in-second: 1209600                                # 单位/秒 两周
+

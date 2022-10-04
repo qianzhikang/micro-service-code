@@ -5,7 +5,7 @@ spring:
     nacos:
       config:
         server-addr: 124.221.233.62:8848
-        file-extension: json
+        file-extension: yml
         namespace: dev
         timeout: 5000
         config-long-poll-timeout: 1000

@@ -3,6 +3,7 @@ package com.qzk.contentservice.service.impl;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 
+import com.qzk.contentservice.domain.dto.AuditShareDto;
 import com.qzk.contentservice.domain.entity.Share;
 import com.qzk.contentservice.repository.ShareRepository;
 import com.qzk.contentservice.service.ShareService;
@@ -12,9 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
- * @Description TODO
+ * @Description 内容服务实现类
  * @Date 2022-09-06-16-55
  * @Author qianzhikang
  */
@@ -46,14 +48,33 @@ public class ShareServiceImpl implements ShareService {
         return shareRepository.findAll();
     }
 
+    /**
+     * 审核分享内容
+     *
+     * @param auditShareDto 分享内容dto
+     * @return 分享内容详情
+     */
     @Override
-    @SentinelResource(value = "getNumber",blockHandler = "getNumberBlock")
-    public String getNumber() {
-        return "123";
+    public Share auditShare(AuditShareDto auditShareDto) {
+        Share share = shareRepository.findById(auditShareDto.getId()).orElse(null);
+        if (!Objects.equals("NOT_YET", share.getAuditStatus())) {
+            throw new IllegalArgumentException("参数非法！该分享已审核！");
+        }
+        share.setAuditStatus(auditShareDto.getShareAuditEnums().toString());
+        share.setReason(auditShareDto.getReason());
+        share.setShowFlag(auditShareDto.getShowFlag() ? 1 : 0);
+        shareRepository.saveAndFlush(share);
+        return share;
     }
 
-    @Override
-    public String getNumberBlock(BlockException exception) {
-        return "block";
-    }
+    //@Override
+    //@SentinelResource(value = "getNumber",blockHandler = "getNumberBlock")
+    //public String getNumber() {
+    //    return "123";
+    //}
+    //
+    //@Override
+    //public String getNumberBlock(BlockException exception) {
+    //    return "block";
+    //}
 }

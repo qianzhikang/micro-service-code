@@ -39,5 +39,20 @@ public class Share {
 
     private String author;
 
+    private String cover;
+
+    private String summary;
+
+    private Integer price;
+
+    private String downloadUrl;
+
+    private Integer buyCount;
+
+    private Integer showFlag;
+
+    private String auditStatus;
+
+    private String reason;
 
 }

@@ -1,3 +1,4 @@
+.DS_Store
 share-single/upload-service/src/main/resources/aliyun.properties
 HELP.md
 target/
