@@ -7,6 +7,7 @@ import com.qzk.userservice.common.ResponseResult;
 import com.qzk.userservice.common.ResultCode;
 import com.qzk.userservice.domain.dto.UserDto;
 import com.qzk.userservice.domain.entity.User;
+import com.qzk.userservice.domain.vo.LoginVo;
 import com.qzk.userservice.service.UserService;
 import com.qzk.userservice.utils.JwtOperator;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class UserController {
         objectObjectHashMap.put("id", user.getId());
         objectObjectHashMap.put("role", user.getRoles());
         String token = jwtOperator.generateToken(objectObjectHashMap);
-        return ResponseResult.success(token);
+        return ResponseResult.success(LoginVo.builder().id(user.getId()).token(token).build());
     }
 
 }

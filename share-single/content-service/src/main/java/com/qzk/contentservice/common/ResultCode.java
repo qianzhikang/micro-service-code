@@ -2,7 +2,7 @@ package com.qzk.contentservice.common;
 
 /**
  * @description: 状态枚举
- * @author: mqxu
+ * @author: qzk
  **/
 public enum ResultCode {
     /* 成功状态码 */

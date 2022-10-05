@@ -1,6 +1,8 @@
 package com.qzk.noticeservice.repository;
 
 import com.qzk.noticeservice.domain.entity.Notice;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -20,4 +22,12 @@ public interface NoticeRepository extends JpaRepository<Notice,Integer> {
      * @return List
      */
     List<Notice> findByShowFlag(Boolean showFlag, Sort sort);
+
+    /**
+     * 分页根据是否显示提交查询，指定排序规则
+     * @param showFlag 是否显示
+     * @param pageRequest  分页规则
+     * @return 分页数据
+     */
+    Page<Notice> findByShowFlag(Boolean showFlag,PageRequest pageRequest);
 }

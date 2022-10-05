@@ -2,6 +2,7 @@ package com.qzk.contentservice.service;
 
 
 import com.qzk.contentservice.domain.entity.Notice;
+import org.springframework.data.domain.Page;
 
 /**
  * @Description TODO
@@ -14,4 +15,12 @@ public interface NoticeService {
      * @return Notice
      */
     Notice getLatestNotice();
+
+    /**
+     * 获取通知
+     * @param pageNum 开始页
+     * @param pageSize 每页数量
+     * @return 分页数据
+     */
+    Page<Notice> getNotice(int pageNum,int pageSize);
 }

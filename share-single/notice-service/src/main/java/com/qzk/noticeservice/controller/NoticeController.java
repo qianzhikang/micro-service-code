@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -39,6 +40,11 @@ public class NoticeController {
         } else {
             return ResponseResult.success(noticeService.getLatestNotice());
         }
+    }
+
+    @GetMapping("/page-notices")
+    public ResponseResult getNoticePage(@RequestParam int pageNum, @RequestParam int pageSize) {
+        return ResponseResult.success(noticeService.getNotice(pageNum,pageSize));
     }
 
 

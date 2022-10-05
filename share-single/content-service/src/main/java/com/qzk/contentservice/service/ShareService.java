@@ -4,6 +4,7 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.qzk.contentservice.domain.dto.AuditShareDto;
 import com.qzk.contentservice.domain.entity.Share;
 import com.qzk.contentservice.domain.enums.ShareAuditEnums;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -25,6 +26,14 @@ public interface ShareService {
      * @return List
      */
     List<Share> getAll();
+
+    /**
+     * 获取分页资源
+     * @param pageNum 当前页
+     * @param pageSize 每页数量
+     * @return 分页数据
+     */
+    Page<Share> getPageShare(int pageNum,int pageSize);
 
 
     /**

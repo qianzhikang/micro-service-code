@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * @description: 返回结果
- * @author: mqxu
+ * @author: qzk
  **/
 @Data
 public class ResponseResult {

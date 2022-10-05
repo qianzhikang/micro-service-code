@@ -10,6 +10,9 @@ import com.qzk.contentservice.service.ShareService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,6 +49,19 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public List<Share> getAll() {
         return shareRepository.findAll();
+    }
+
+    /**
+     * 获取分页资源
+     *
+     * @param pageNum  当前页
+     * @param pageSize 每页数量
+     * @return 分页数据
+     */
+    @Override
+    public Page<Share> getPageShare(int pageNum, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by("createTime").descending());
+        return shareRepository.findByShowFlag(1,pageRequest);
     }
 
     /**

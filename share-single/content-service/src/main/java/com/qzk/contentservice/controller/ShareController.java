@@ -12,10 +12,8 @@ import com.qzk.contentservice.openfeign.UserService;
 import com.qzk.contentservice.service.ShareService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 /**
  * @Description TODO
@@ -32,7 +30,7 @@ public class ShareController {
 
     @GetMapping("{id}")
     @SentinelResource(value = "getShareById")
-    public ResponseResult getShareById(@PathVariable Integer id){
+    public ResponseResult getShareById(@PathVariable Integer id) {
         //if (shareService.getNumber().equals("123")){
         //    return ResponseResult.success(shareService.getNumber());
         //}else {
@@ -48,17 +46,17 @@ public class ShareController {
 
 
     @GetMapping("/all")
-    @SentinelResource(value = "getAllShares",blockHandler = "getAllBlock")
+    @SentinelResource(value = "getAllShares", blockHandler = "getAllBlock")
     public ResponseResult getAllShares() {
         return ResponseResult.success(shareService.getAll());
-        //if (shareService.getNumber().equals("123")){
-        //    return ResponseResult.success(shareService.getNumber());
-        //}else {
-        //    return ResponseResult.failure(ResultCode.INTERFACE_EXCEED_LOAD);
-        //}
     }
 
-    public ResponseResult getAllBlock(BlockException e){
+    @GetMapping("/page-shares")
+    public ResponseResult getShares(@RequestParam int pageNum, @RequestParam int pageSize) {
+        return ResponseResult.success(shareService.getPageShare(pageNum, pageSize));
+    }
+
+    public ResponseResult getAllBlock(BlockException e) {
         return ResponseResult.failure(ResultCode.INTERFACE_FORBID_VISIT);
     }
 
