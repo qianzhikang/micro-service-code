@@ -5,3 +5,6 @@ jwt:
   secret: qzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzkqzk   # 密码
   expire-time-in-second: 1209600                                # 单位/秒 两周
 
+rocketmq:
+  name-server: 124.221.233.62:9876
+
