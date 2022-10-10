@@ -2,6 +2,7 @@ package com.qzk.userservice.service;
 
 
 import com.qzk.userservice.domain.dto.UserDto;
+import com.qzk.userservice.domain.dto.UserProfileAuditDto;
 import com.qzk.userservice.domain.entity.User;
 
 /**
@@ -24,5 +25,13 @@ public interface UserService {
      * @return User
      */
     User login(UserDto userDto);
+
+
+    /**
+     * 修改个人信息
+     * @param userProfileAuditDto 新的用户个人信息
+     * @return 新用户信息
+     */
+    User auditProfile(UserProfileAuditDto userProfileAuditDto);
 
 }
