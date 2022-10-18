@@ -4,6 +4,7 @@ import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 
 import com.qzk.contentservice.domain.dto.AuditShareDto;
+import com.qzk.contentservice.domain.dto.ShareQueryDto;
 import com.qzk.contentservice.domain.dto.UserAddBonusDto;
 import com.qzk.contentservice.domain.entity.MidUserShare;
 import com.qzk.contentservice.domain.entity.Share;
@@ -17,9 +18,16 @@ import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,14 +58,51 @@ public class ShareServiceImpl implements ShareService {
         return shareRepository.findById(id).orElse(null);
     }
 
+
     /**
      * 获取所有资源
      *
      * @return List
      */
     @Override
-    public List<Share> getAll() {
-        return shareRepository.findAll();
+    public Page<Share> getAll(int pageNum, int pageSize, ShareQueryDto shareQueryDto, Integer userId) {
+        // 分页规则
+        Pageable pageable = PageRequest.of(pageNum, pageSize,Sort.by(Sort.Direction.DESC,"createTime"));
+        // 条件查询
+        Page<Share> all = shareRepository.findAll(new Specification<Share>() {
+            @Override
+            public Predicate toPredicate(Root<Share> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                // 是否显示条件
+                predicates.add(criteriaBuilder.equal(root.get("showFlag").as(Integer.class), 1));
+                // 处理查询封装对象空值问题
+                if (shareQueryDto != null) {
+                    // 拼接条件
+                    if (shareQueryDto.getTitle() != null && !shareQueryDto.getTitle().equals("")) {
+                        predicates.add(criteriaBuilder.like(root.get("title").as(String.class), "%" + shareQueryDto.getTitle() + "%"));
+                    }
+                    if (shareQueryDto.getSummary() != null && !shareQueryDto.getSummary().equals("")) {
+                        predicates.add(criteriaBuilder.like(root.get("summary").as(String.class), "%" + shareQueryDto.getSummary() + "%"));
+                    }
+                    if (shareQueryDto.getAuthor() != null && !shareQueryDto.getAuthor().equals("")) {
+                        predicates.add(criteriaBuilder.like(root.get("author").as(String.class), "%" + shareQueryDto.getAuthor() + "%"));
+                    }
+                }
+                return criteriaBuilder.and(predicates.toArray(predicates.toArray(new Predicate[predicates.size()])));
+            }
+        }, pageable);
+        if (userId == null){
+            all.forEach(share -> share.setDownloadUrl(null));
+        }else {
+            all.forEach(share -> {
+                Integer shareId = share.getId();
+                MidUserShare midUserShare = midUserShareService.selectRecordWithUserIdAndShareId(userId, shareId);
+                if (midUserShare == null) {
+                    share.setDownloadUrl(null);
+                }
+            });
+        }
+        return all;
     }
 
     /**
@@ -72,6 +117,7 @@ public class ShareServiceImpl implements ShareService {
         PageRequest pageRequest = PageRequest.of(pageNum, pageSize, Sort.by("createTime").descending());
         return shareRepository.findByShowFlag(1, pageRequest);
     }
+
 
     /**
      * 审核分享内容

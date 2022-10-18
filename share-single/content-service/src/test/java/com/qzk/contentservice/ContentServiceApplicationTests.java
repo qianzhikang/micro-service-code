@@ -1,9 +1,11 @@
 package com.qzk.contentservice;
 
+import com.qzk.contentservice.domain.dto.ShareQueryDto;
 import com.qzk.contentservice.domain.entity.Notice;
 import com.qzk.contentservice.domain.entity.Share;
 import com.qzk.contentservice.repository.NoticeRepository;
 import com.qzk.contentservice.repository.ShareRepository;
+import com.qzk.contentservice.service.ShareService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,15 +25,14 @@ class ContentServiceApplicationTests {
 
     @Resource
     ShareRepository shareRepository;
+
+    @Resource
+    ShareService shareService;
     @Test
     void contextLoads() {
-        Sort sort = Sort.by("createTime").descending();
-        PageRequest pageRequest = PageRequest.of(0, 2, Sort.by("createTime").descending());
-        //Page<Notice> byShowFlag = noticeRepository.findByShowFlag(true, pageRequest);
-        Page<Share> byShowFlag = shareRepository.findByShowFlag(1, pageRequest);
-        System.out.println(byShowFlag.getContent());
-        byShowFlag.forEach((item)-> System.out.println(item));
-        //System.out.println();
+        ShareQueryDto shareQueryDto = ShareQueryDto.builder().summary("Java").build();
+        Page<Share> java = shareService.getAll(0, 5,shareQueryDto,1);
+        java.forEach(item-> System.out.println("-->"+item));
     }
 
 }

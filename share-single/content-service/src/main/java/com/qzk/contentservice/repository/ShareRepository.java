@@ -3,15 +3,16 @@ package com.qzk.contentservice.repository;
 import com.qzk.contentservice.domain.entity.Share;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * @Description TODO
  * @Date 2022-09-06-16-54
  * @Author qianzhikang
  */
-
-public interface ShareRepository extends JpaRepository<Share,Integer> {
+public interface ShareRepository extends JpaRepository<Share,Integer>, JpaSpecificationExecutor<Share> {
     /**
      * 根据是否显示查询
      * @param showFlag 是否显示
@@ -19,4 +20,13 @@ public interface ShareRepository extends JpaRepository<Share,Integer> {
      * @return 分页Share
      */
     Page<Share> findByShowFlag(Integer showFlag, PageRequest pageRequest);
+
+    ///**
+    // * 分页模糊查询
+    // * @param title 字符
+    // * @param showFlag 是否显示
+    // * @param pageRequest 分页
+    // * @return 分页share
+    // */
+    //Page<Share> findByTitleLikeOrAuthorLikeOrSummaryLikeAndShowFlag(String title,String author,String summary,Integer showFlag,PageRequest pageRequest);
 }

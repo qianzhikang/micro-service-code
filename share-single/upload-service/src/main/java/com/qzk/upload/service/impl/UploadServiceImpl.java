@@ -49,8 +49,8 @@ public class UploadServiceImpl implements UploadService {
             System.err.println("文件上传出现异常");
         }
         //上传oss
-        ossClient.putObject(bucketName,uploadFileName,inputStream);
+        ossClient.putObject(bucketName,"avatar/" + uploadFileName,inputStream);
         ossClient.shutdown();
-        return "https://" + bucketName + "." + endPoint + "/" + uploadFileName;
+        return "https://" + bucketName + "." + endPoint + "/" +"avatar/"+ uploadFileName;
     }
 }

@@ -2,6 +2,7 @@ package com.qzk.contentservice.service;
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.qzk.contentservice.domain.dto.AuditShareDto;
+import com.qzk.contentservice.domain.dto.ShareQueryDto;
 import com.qzk.contentservice.domain.entity.Share;
 import com.qzk.contentservice.domain.enums.ShareAuditEnums;
 import org.springframework.data.domain.Page;
@@ -22,10 +23,14 @@ public interface ShareService {
     Share findById(Integer id);
 
     /**
-     * 获取所有资源
-     * @return List
+     * 分页资源
+     * @param pageNum  当前页
+     * @param pageSize 每页数量
+     * @param shareQueryDto 模糊查询参数
+     * @param userId 用户id
+     * @return Page<Share>
      */
-    List<Share> getAll();
+    Page<Share> getAll(int pageNum, int pageSize, ShareQueryDto shareQueryDto,Integer userId);
 
     /**
      * 获取分页资源
@@ -35,13 +40,13 @@ public interface ShareService {
      */
     Page<Share> getPageShare(int pageNum,int pageSize);
 
-
     /**
      * 审核分享内容
      * @param auditShareDto 分享内容dto
      * @return 分享内容详情
      */
     Share auditShare(AuditShareDto auditShareDto);
+
 
     //Sentinel测试
     //String getNumber();

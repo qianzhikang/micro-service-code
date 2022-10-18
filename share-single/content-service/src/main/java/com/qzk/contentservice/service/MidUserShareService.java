@@ -13,4 +13,12 @@ public interface MidUserShareService {
      * @param midUserShare 实体类信息
      */
    void insert(MidUserShare midUserShare);
+
+    /**
+     * 根据userID 和 shareID 查询记录
+     * @param userId 用户id
+     * @param shareId shareId
+     * @return 记录
+     */
+   MidUserShare selectRecordWithUserIdAndShareId(int userId,int shareId);
 }

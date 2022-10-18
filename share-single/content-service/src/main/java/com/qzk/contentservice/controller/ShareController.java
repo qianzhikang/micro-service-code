@@ -6,11 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.qzk.contentservice.common.ResponseResult;
 import com.qzk.contentservice.common.ResultCode;
 import com.qzk.contentservice.domain.dto.ShareDto;
+import com.qzk.contentservice.domain.dto.ShareQueryDto;
 import com.qzk.contentservice.domain.entity.Share;
 import com.qzk.contentservice.domain.entity.User;
 import com.qzk.contentservice.openfeign.UserService;
 import com.qzk.contentservice.service.ShareService;
+import com.qzk.contentservice.utils.JwtOperator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +24,18 @@ import org.springframework.web.bind.annotation.*;
  * @Author qianzhikang
  */
 @RestController
+@Slf4j
 @RequestMapping("/content")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ShareController {
+
+    final Integer MAX_SIZE = 50;
+
     private final ShareService shareService;
 
     private final UserService userService;
+
+    private final JwtOperator jwtOperator;
 
     @GetMapping("{id}")
     @SentinelResource(value = "getShareById")
@@ -44,12 +53,21 @@ public class ShareController {
         return ResponseResult.success(ShareDto.builder().share(share).nickName(user.getNickname()).avatar(user.getAvatar()).build());
     }
 
-
     @GetMapping("/all")
-    @SentinelResource(value = "getAllShares", blockHandler = "getAllBlock")
-    public ResponseResult getAllShares() {
-        return ResponseResult.success(shareService.getAll());
+    public ResponseResult getAllShares(@RequestParam(required = false, defaultValue = "0") int pageNum,
+                                       @RequestParam(required = false, defaultValue = "5") int pageSize,
+                                       @RequestBody(required = false) ShareQueryDto shareQueryDto,
+                                       @RequestHeader(required = false, name = "X-Token") String token) {
+        if (pageSize > MAX_SIZE) {
+            pageSize = MAX_SIZE;
+        }
+        Integer userId = null;
+        if (token != null) {
+            userId = getUserIdFromToken(token);
+        }
+        return ResponseResult.success(shareService.getAll(pageNum, pageSize, shareQueryDto, userId));
     }
+
 
     @GetMapping("/page-shares")
     public ResponseResult getShares(@RequestParam int pageNum, @RequestParam int pageSize) {
@@ -60,4 +78,9 @@ public class ShareController {
         return ResponseResult.failure(ResultCode.INTERFACE_FORBID_VISIT);
     }
 
+
+    private Integer getUserIdFromToken(String token) {
+        return Integer.parseInt(jwtOperator.getClaimsFromToken(token).get("id").toString());
+    }
 }
+
