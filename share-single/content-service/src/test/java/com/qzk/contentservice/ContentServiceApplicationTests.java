@@ -1,6 +1,7 @@
 package com.qzk.contentservice;
 
 import com.qzk.contentservice.domain.dto.ContributeRecordDto;
+import com.qzk.contentservice.domain.dto.ExchangeRecordDto;
 import com.qzk.contentservice.domain.dto.ShareQueryDto;
 import com.qzk.contentservice.domain.entity.Notice;
 import com.qzk.contentservice.domain.entity.Share;
@@ -41,8 +42,10 @@ class ContentServiceApplicationTests {
         Pageable pageable = PageRequest.of(0, 5, Sort.by("createTime").descending());
         //Pageable pageable = PageRequest.of(0,5);
         //Pageable pageable = new PageRequest(0,5);
-        Page<ContributeRecordDto> byUserId = shareRepository.find(1,pageable);
-        byUserId.forEach(System.out::println);
+        //Page<ContributeRecordDto> byUserId = shareRepository.find(1,pageable);
+        Page<ExchangeRecordDto> exchange = shareRepository.findExchange(2, pageable);
+        exchange.forEach(System.out::println);
+        //System.out.println(exchange.getContent());
     }
 
 }

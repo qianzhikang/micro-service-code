@@ -254,6 +254,20 @@ public class ShareServiceImpl implements ShareService {
         return myContribute;
     }
 
+    /**
+     * 查询兑换记录
+     *
+     * @param pageNum  分页
+     * @param pageSize 分页
+     * @param userId   用户id
+     * @return 分页兑换记录
+     */
+    @Override
+    public Page<ExchangeRecordDto> getExchangeRecord(Integer pageNum, Integer pageSize, Integer userId) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("createTime").descending());
+        return shareRepository.findExchange(userId,pageable);
+    }
+
 
     //@Override
     //@SentinelResource(value = "getNumber",blockHandler = "getNumberBlock")

@@ -1,10 +1,7 @@
 package com.qzk.contentservice.service;
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.qzk.contentservice.domain.dto.AuditShareDto;
-import com.qzk.contentservice.domain.dto.ContributeDto;
-import com.qzk.contentservice.domain.dto.ContributeRecordDto;
-import com.qzk.contentservice.domain.dto.ShareQueryDto;
+import com.qzk.contentservice.domain.dto.*;
 import com.qzk.contentservice.domain.entity.Share;
 import com.qzk.contentservice.domain.enums.ShareAuditEnums;
 import org.springframework.data.domain.Page;
@@ -75,6 +72,15 @@ public interface ShareService {
      * @return 分页投稿记录
      */
     Page<ContributeRecordDto> getContributeRecord(Integer pageNum,Integer pageSize,Integer userId);
+
+    /**
+     * 查询兑换记录
+     * @param pageNum 分页
+     * @param pageSize 分页
+     * @param userId 用户id
+     * @return 分页兑换记录
+     */
+    Page<ExchangeRecordDto> getExchangeRecord(Integer pageNum, Integer pageSize, Integer userId);
 
     //Sentinel测试
     //String getNumber();

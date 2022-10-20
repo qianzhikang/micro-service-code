@@ -1,6 +1,7 @@
 package com.qzk.contentservice.repository;
 
 import com.qzk.contentservice.domain.dto.ContributeRecordDto;
+import com.qzk.contentservice.domain.dto.ExchangeRecordDto;
 import com.qzk.contentservice.domain.entity.Share;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,10 +19,11 @@ import java.util.List;
  * @Date 2022-09-06-16-54
  * @Author qianzhikang
  */
-public interface ShareRepository extends JpaRepository<Share,Integer>, JpaSpecificationExecutor<Share> {
+public interface ShareRepository extends JpaRepository<Share, Integer>, JpaSpecificationExecutor<Share> {
     /**
      * 根据是否显示查询
-     * @param showFlag 是否显示
+     *
+     * @param showFlag    是否显示
      * @param pageRequest 分页
      * @return 分页Share
      */
@@ -29,12 +31,17 @@ public interface ShareRepository extends JpaRepository<Share,Integer>, JpaSpecif
 
     /**
      * 投稿记录查询
+     *
      * @param userId 用户id
-     //* @param pageRequest 分页数据
+     *               //* @param pageRequest 分页数据
      * @return 分页数据
      */
     @Query(value = "SELECT new com.qzk.contentservice.domain.dto.ContributeRecordDto(s.title,s.cover,s.createTime) FROM Share s WHERE s.userId =?1")
-    Page<ContributeRecordDto> find(Integer userId,Pageable pageable);
+    Page<ContributeRecordDto> find(Integer userId, Pageable pageable);
+
+
+    @Query(value = "SELECT new com.qzk.contentservice.domain.dto.ExchangeRecordDto(s.title,s.cover,s.createTime) FROM Share s WHERE s.id IN (SELECT m.shareId FROM MidUserShare m WHERE m.userId = ?1) AND s.userId <> ?1")
+    Page<ExchangeRecordDto> findExchange(Integer userId, Pageable pageable);
 
 
 }
