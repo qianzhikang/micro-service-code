@@ -3,7 +3,9 @@ package com.qzk.userservice.service;
 
 import com.qzk.userservice.domain.dto.UserDto;
 import com.qzk.userservice.domain.dto.UserProfileAuditDto;
+import com.qzk.userservice.domain.entity.BonusEventLog;
 import com.qzk.userservice.domain.entity.User;
+import org.springframework.data.domain.Page;
 
 /**
  * @Description TODO
@@ -33,5 +35,14 @@ public interface UserService {
      * @return 新用户信息
      */
     User auditProfile(UserProfileAuditDto userProfileAuditDto);
+
+    /**
+     * 获取积分明细
+     * @param userId 用户id
+     * @param pageNum 分页
+     * @param pageSize 分页
+     * @return 分页积分明细
+     */
+    Page<BonusEventLog> getBonusRecord(Integer userId,Integer pageNum,Integer pageSize);
 
 }

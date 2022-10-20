@@ -5,7 +5,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.qzk.userservice.domain.dto.UserDto;
 import com.qzk.userservice.domain.dto.UserProfileAuditDto;
+import com.qzk.userservice.domain.entity.BonusEventLog;
 import com.qzk.userservice.domain.entity.User;
+import com.qzk.userservice.repository.BonusEventLogRepository;
 import com.qzk.userservice.repository.UserRepository;
 import com.qzk.userservice.service.UserService;
 import com.qzk.userservice.utils.JwtOperator;
@@ -13,6 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final JwtOperator jwtOperator;
+    private final BonusEventLogRepository bonusEventLogRepository;
 
     /**
      * 根据id查用户
@@ -69,5 +75,19 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
+    }
+
+    /**
+     * 获取积分明细
+     *
+     * @param userId   用户id
+     * @param pageNum  分页
+     * @param pageSize 分页
+     * @return 分页积分明细
+     */
+    @Override
+    public Page<BonusEventLog> getBonusRecord(Integer userId, Integer pageNum, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("createTime").descending());
+        return bonusEventLogRepository.findByUserId(userId,pageable);
     }
 }

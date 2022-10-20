@@ -30,6 +30,7 @@ public class UserController {
     private final UserService userService;
     private final JwtOperator jwtOperator;
 
+
     @GetMapping("{id}")
     @CheckLogin
     @SentinelResource(value = "getUserById")
@@ -80,5 +81,20 @@ public class UserController {
         return ResponseResult.success(user);
 
     }
+
+
+    @GetMapping("/bonus-record")
+    public ResponseResult getBonusRecord(@RequestHeader(name = "X-Token") String token,
+                                         @RequestParam(required = false,defaultValue = "0") Integer pageNum,
+                                         @RequestParam(required = false,defaultValue = "5") Integer pageSize){
+        Integer userId = getUserIdFromToken(token);
+        return ResponseResult.success(userService.getBonusRecord(userId,pageNum,pageSize));
+    }
+
+
+    private Integer getUserIdFromToken(String token) {
+        return Integer.parseInt(jwtOperator.getClaimsFromToken(token).get("id").toString());
+    }
+
 
 }
