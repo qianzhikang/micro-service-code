@@ -37,22 +37,36 @@ public class ShareController {
 
     private final JwtOperator jwtOperator;
 
+    /**
+     * 根据id查询具体的内容
+     * @param id id
+     * @return ResponseResult
+     */
     @GetMapping("{id}")
     @SentinelResource(value = "getShareById")
-    public ResponseResult getShareById(@PathVariable Integer id) {
+    public ResponseResult getShareById(@PathVariable Integer id,@RequestHeader(value = "X-Token") String token) {
+        log.info(token);
         //if (shareService.getNumber().equals("123")){
         //    return ResponseResult.success(shareService.getNumber());
         //}else {
         //    return ResponseResult.failure(ResultCode.INTERFACE_EXCEED_LOAD);
         //}
         Share share = shareService.findById(id);
-        ResponseResult result = userService.getUser(share.getUserId());
+        ResponseResult result = userService.getUser(share.getUserId(),token);
         String jsonStrings = JSONObject.toJSONString(result.getData());
         JSONObject jsonObject = JSONObject.parseObject(jsonStrings);
         User user = JSONObject.toJavaObject(jsonObject, User.class);
         return ResponseResult.success(ShareDto.builder().share(share).nickName(user.getNickname()).avatar(user.getAvatar()).build());
     }
 
+    /**
+     * 模糊查询、分页
+     * @param pageNum 分页信息
+     * @param pageSize 分页信息
+     * @param shareQueryDto 查询条件
+     * @param token token
+     * @return ResponseResult
+     */
     @GetMapping("/all")
     public ResponseResult getAllShares(@RequestParam(required = false, defaultValue = "0") int pageNum,
                                        @RequestParam(required = false, defaultValue = "5") int pageSize,
@@ -73,6 +87,25 @@ public class ShareController {
     public ResponseResult getShares(@RequestParam int pageNum, @RequestParam int pageSize) {
         return ResponseResult.success(shareService.getPageShare(pageNum, pageSize));
     }
+
+
+    /**
+     * 兑换接口
+     * @param shareId 内容id
+     * @param token token
+     * @return 兑换内容详情
+     * @throws Exception
+     */
+    @PostMapping("/exchange")
+    public ResponseResult exchange(@RequestParam int shareId,@RequestHeader(name = "X-Token") String token) throws Exception {
+        Integer userId = getUserIdFromToken(token);
+        Share exchange = shareService.exchange(shareId, userId, token);
+        return ResponseResult.success(exchange);
+    }
+
+
+
+
 
     public ResponseResult getAllBlock(BlockException e) {
         return ResponseResult.failure(ResultCode.INTERFACE_FORBID_VISIT);

@@ -3,12 +3,19 @@ package com.qzk.contentservice.service.impl;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 
+import com.alibaba.fastjson.JSONObject;
+import com.qzk.contentservice.common.ResponseResult;
 import com.qzk.contentservice.domain.dto.AuditShareDto;
 import com.qzk.contentservice.domain.dto.ShareQueryDto;
 import com.qzk.contentservice.domain.dto.UserAddBonusDto;
+import com.qzk.contentservice.domain.dto.UserProfileAuditDto;
+import com.qzk.contentservice.domain.entity.BonusEventLog;
 import com.qzk.contentservice.domain.entity.MidUserShare;
 import com.qzk.contentservice.domain.entity.Share;
+import com.qzk.contentservice.domain.entity.User;
 import com.qzk.contentservice.domain.enums.ShareAuditEnums;
+import com.qzk.contentservice.openfeign.UserService;
+import com.qzk.contentservice.repository.BonusEventLogRepository;
 import com.qzk.contentservice.repository.ShareRepository;
 import com.qzk.contentservice.service.MidUserShareService;
 import com.qzk.contentservice.service.ShareService;
@@ -22,12 +29,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,6 +54,10 @@ public class ShareServiceImpl implements ShareService {
     private final MidUserShareService midUserShareService;
 
     private final RocketMQTemplate rocketMQTemplate;
+
+    private final UserService userService;
+
+    private final BonusEventLogRepository bonusEventLogRepository;
 
 
     /**
@@ -67,7 +80,7 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public Page<Share> getAll(int pageNum, int pageSize, ShareQueryDto shareQueryDto, Integer userId) {
         // 分页规则
-        Pageable pageable = PageRequest.of(pageNum, pageSize,Sort.by(Sort.Direction.DESC,"createTime"));
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.DESC, "createTime"));
         // 条件查询
         Page<Share> all = shareRepository.findAll(new Specification<Share>() {
             @Override
@@ -91,9 +104,9 @@ public class ShareServiceImpl implements ShareService {
                 return criteriaBuilder.and(predicates.toArray(predicates.toArray(new Predicate[predicates.size()])));
             }
         }, pageable);
-        if (userId == null){
+        if (userId == null) {
             all.forEach(share -> share.setDownloadUrl(null));
-        }else {
+        } else {
             all.forEach(share -> {
                 Integer shareId = share.getId();
                 MidUserShare midUserShare = midUserShareService.selectRecordWithUserIdAndShareId(userId, shareId);
@@ -143,6 +156,61 @@ public class ShareServiceImpl implements ShareService {
         // 往队列中添加一条加积分的数据
         if (ShareAuditEnums.PASS.equals(auditShareDto.getShareAuditEnums())) {
             rocketMQTemplate.convertAndSend("add-bonus", UserAddBonusDto.builder().userId(share.getUserId()).bonus(50).build());
+        }
+        return share;
+    }
+
+    /**
+     * 兑换资源
+     *
+     * @param shareId 资源id
+     * @param userId  用户id
+     * @return 兑换的资源
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Share exchange(Integer shareId, Integer userId, String token) throws Exception {
+        // 查询资源单价
+        Share share = shareRepository.findById(shareId).orElse(null);
+        assert share != null;
+        Integer price = share.getPrice();
+
+        // 查询用户是否已经兑换过
+        MidUserShare midUserShare = midUserShareService.selectRecordWithUserIdAndShareId(userId, shareId);
+        // 是否兑换过
+        if (midUserShare != null) {
+            return share;
+        } else {
+            // openfeign调用远程服务获取用户信息
+            ResponseResult result = userService.getUser(userId, token);
+            String jsonStrings = JSONObject.toJSONString(result.getData());
+            JSONObject jsonObject = JSONObject.parseObject(jsonStrings);
+            User user = JSONObject.toJavaObject(jsonObject, User.class);
+            if (user.getBonus() > price) {
+                ResponseResult newData = userService.auditUserData(UserProfileAuditDto.builder().id(user.getId()).bonus(user.getBonus() - price).build(), token);
+                String newDataStr = JSONObject.toJSONString(result.getData());
+                JSONObject newJsonObj = JSONObject.parseObject(newDataStr);
+                User newUser = JSONObject.toJavaObject(newJsonObj, User.class);
+
+                // 插入用户兑换表记录
+                midUserShareService.insert(MidUserShare.builder().shareId(share.getId()).userId(userId).build());
+
+                // 修改兑换次数
+                share.setBuyCount(share.getBuyCount() + 1);
+                share = shareRepository.saveAndFlush(share);
+
+                // 插入积分变动记录
+                bonusEventLogRepository.saveAndFlush(BonusEventLog.builder()
+                        .userId(userId)
+                        .value("-" + price)
+                        .event("EXCHANGE")
+                        .createTime(new Date())
+                        .description("兑换资源")
+                        .build());
+
+            } else {
+                throw new Exception("积分不足");
+            }
         }
         return share;
     }

@@ -1,10 +1,10 @@
 package com.qzk.contentservice.openfeign;
 
 import com.qzk.contentservice.common.ResponseResult;
+import com.qzk.contentservice.domain.dto.UserProfileAuditDto;
 import com.qzk.contentservice.openfeign.fallback.UserServiceFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description TODO
@@ -15,5 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(value = "user-service",path = "/users",fallbackFactory = UserServiceFallbackFactory.class)
 public interface UserService {
     @GetMapping("{id}")
-    ResponseResult getUser(@PathVariable(value = "id") Integer id);
+    ResponseResult getUser(@PathVariable(value = "id") Integer id,@RequestHeader(name = "X-Token") String token);
+
+    @PostMapping("/audit")
+    ResponseResult auditUserData(@RequestBody UserProfileAuditDto userProfileAuditDto,@RequestHeader(name = "X-Token") String token);
 }

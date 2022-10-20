@@ -18,10 +18,14 @@ import org.springframework.stereotype.Component;
 public class UserServiceFallbackFactory implements FallbackFactory<UserService> {
     @Override
     public UserService create(Throwable cause) {
-        return id -> {
-            log.info("fallback factory cause by " + cause.getMessage());
-            User user = User.builder().avatar("test.png").nickname("降级方案用户").mobile("10000000000").build();
-            return ResponseResult.success(user);
-        };
+        return null;
     }
+    //@Override
+    //public UserService create(Throwable cause) {
+    //    return (id,token) -> {
+    //        log.info("fallback factory cause by " + cause.getMessage());
+    //        User user = User.builder().avatar("test.png").nickname("降级方案用户").mobile("10000000000").build();
+    //        return ResponseResult.success(user);
+    //    };
+    //}
 }

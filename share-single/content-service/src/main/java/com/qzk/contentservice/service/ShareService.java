@@ -48,6 +48,15 @@ public interface ShareService {
     Share auditShare(AuditShareDto auditShareDto);
 
 
+    /**
+     * 兑换资源
+     * @param shareId 资源id
+     * @param userId 用户id
+     * @return 兑换的资源
+     */
+    Share exchange(Integer shareId,Integer userId,String token) throws Exception;
+
+
     //Sentinel测试
     //String getNumber();
     //

@@ -1,4 +1,4 @@
-package com.qzk.userservice.domain.dto;
+package com.qzk.contentservice.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

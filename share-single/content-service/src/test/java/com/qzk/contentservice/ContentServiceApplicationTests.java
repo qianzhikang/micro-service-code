@@ -26,13 +26,16 @@ class ContentServiceApplicationTests {
     @Resource
     ShareRepository shareRepository;
 
+
     @Resource
     ShareService shareService;
     @Test
-    void contextLoads() {
-        ShareQueryDto shareQueryDto = ShareQueryDto.builder().summary("Java").build();
-        Page<Share> java = shareService.getAll(0, 5,shareQueryDto,1);
-        java.forEach(item-> System.out.println("-->"+item));
+    void contextLoads() throws Exception {
+        //ShareQueryDto shareQueryDto = ShareQueryDto.builder().summary("Java").build();
+        //Page<Share> java = shareService.getAll(0, 5,shareQueryDto,1);
+        //java.forEach(item-> System.out.println("-->"+item));
+        //shareService.exchange(1,2,"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoidXNlciIsImlkIjoyLCJpYXQiOjE2NjYyMzI1OTcsImV4cCI6MTY2NzQ0MjE5N30.ZtSAmP7lmMwMwXsktOczatJcGtzTVQ2psW6KWI8vRB4");
+
     }
 
 }

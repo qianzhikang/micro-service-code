@@ -40,6 +40,7 @@ public class UserController {
         //    throw new RuntimeException(e);
         //}
         //int cmd = 3/0;
+        System.out.println("查询..");
         return ResponseResult.success(userService.findById(id));
     }
 
