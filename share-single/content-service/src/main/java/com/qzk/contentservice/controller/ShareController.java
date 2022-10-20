@@ -117,6 +117,21 @@ public class ShareController {
         return ResponseResult.success(contribute);
     }
 
+    /**
+     * 我的投稿
+     * @param token token
+     * @param pageNum 分页
+     * @param pageSize 分页
+     * @return 我的投稿记录-分页
+     */
+    @GetMapping("/contribute-record")
+    public ResponseResult getContributeRecord(@RequestHeader(name = "X-Token") String token,
+                                              @RequestParam(required = false,defaultValue = "0") Integer pageNum,
+                                              @RequestParam(required = false,defaultValue = "5") Integer pageSize){
+        Integer userId = getUserIdFromToken(token);
+        return ResponseResult.success(shareService.getContributeRecord(pageNum,pageSize,userId));
+    }
+
 
 
 

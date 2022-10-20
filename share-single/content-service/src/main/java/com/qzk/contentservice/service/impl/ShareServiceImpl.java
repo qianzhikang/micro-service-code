@@ -239,6 +239,21 @@ public class ShareServiceImpl implements ShareService {
         return insert;
     }
 
+    /**
+     * 查询投稿记录
+     *
+     * @param pageNum  分页数据
+     * @param pageSize 分页数据
+     * @param userId   用户id
+     * @return 分页投稿记录
+     */
+    @Override
+    public Page<ContributeRecordDto> getContributeRecord(Integer pageNum, Integer pageSize, Integer userId) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize, Sort.by("createTime").descending());
+        Page<ContributeRecordDto> myContribute = shareRepository.find(userId,pageable);
+        return myContribute;
+    }
+
 
     //@Override
     //@SentinelResource(value = "getNumber",blockHandler = "getNumberBlock")

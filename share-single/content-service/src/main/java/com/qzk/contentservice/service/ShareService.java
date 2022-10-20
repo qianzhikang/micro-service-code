@@ -3,6 +3,7 @@ package com.qzk.contentservice.service;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.qzk.contentservice.domain.dto.AuditShareDto;
 import com.qzk.contentservice.domain.dto.ContributeDto;
+import com.qzk.contentservice.domain.dto.ContributeRecordDto;
 import com.qzk.contentservice.domain.dto.ShareQueryDto;
 import com.qzk.contentservice.domain.entity.Share;
 import com.qzk.contentservice.domain.enums.ShareAuditEnums;
@@ -65,6 +66,15 @@ public interface ShareService {
      * @return 投稿内容
      */
     Share contribute(Integer userId,String token, ContributeDto contributeDto);
+
+    /**
+     * 查询投稿记录
+     * @param userId 用户id
+     * @param pageNum 分页数据
+     * @param pageSize 分页数据
+     * @return 分页投稿记录
+     */
+    Page<ContributeRecordDto> getContributeRecord(Integer pageNum,Integer pageSize,Integer userId);
 
     //Sentinel测试
     //String getNumber();
