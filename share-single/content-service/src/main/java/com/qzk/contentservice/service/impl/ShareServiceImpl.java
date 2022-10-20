@@ -5,10 +5,7 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
 
 import com.alibaba.fastjson.JSONObject;
 import com.qzk.contentservice.common.ResponseResult;
-import com.qzk.contentservice.domain.dto.AuditShareDto;
-import com.qzk.contentservice.domain.dto.ShareQueryDto;
-import com.qzk.contentservice.domain.dto.UserAddBonusDto;
-import com.qzk.contentservice.domain.dto.UserProfileAuditDto;
+import com.qzk.contentservice.domain.dto.*;
 import com.qzk.contentservice.domain.entity.BonusEventLog;
 import com.qzk.contentservice.domain.entity.MidUserShare;
 import com.qzk.contentservice.domain.entity.Share;
@@ -22,6 +19,7 @@ import com.qzk.contentservice.service.ShareService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -214,6 +212,33 @@ public class ShareServiceImpl implements ShareService {
         }
         return share;
     }
+
+    /**
+     * @param userId        用户id
+     * @param contributeDto 投稿内容
+     * @return 投稿内容
+     */
+    @Override
+    public Share contribute(Integer userId,String token, ContributeDto contributeDto) {
+        ResponseResult result = userService.getUser(userId, token);
+        String jsonStrings = JSONObject.toJSONString(result.getData());
+        JSONObject jsonObject = JSONObject.parseObject(jsonStrings);
+        User user = JSONObject.toJavaObject(jsonObject, User.class);
+
+        Share share = Share.builder()
+                .userId(user.getId())
+                .buyCount(0)
+                .auditStatus(ShareAuditEnums.NOT_YET.toString())
+                .showFlag(0)
+                .author(user.getNickname())
+                .createTime(new Date())
+                .updateTime(new Date())
+                .build();
+        BeanUtils.copyProperties(contributeDto,share);
+        Share insert = shareRepository.saveAndFlush(share);
+        return insert;
+    }
+
 
     //@Override
     //@SentinelResource(value = "getNumber",blockHandler = "getNumberBlock")

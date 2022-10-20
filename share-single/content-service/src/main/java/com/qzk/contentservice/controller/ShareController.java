@@ -5,6 +5,7 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.fastjson.JSONObject;
 import com.qzk.contentservice.common.ResponseResult;
 import com.qzk.contentservice.common.ResultCode;
+import com.qzk.contentservice.domain.dto.ContributeDto;
 import com.qzk.contentservice.domain.dto.ShareDto;
 import com.qzk.contentservice.domain.dto.ShareQueryDto;
 import com.qzk.contentservice.domain.entity.Share;
@@ -103,6 +104,18 @@ public class ShareController {
         return ResponseResult.success(exchange);
     }
 
+    /**
+     * 投稿接口
+     * @param contributeDto 投稿内容
+     * @param token token
+     * @return 投稿内容
+     */
+    @PostMapping("/contribute")
+    public ResponseResult contribute(@RequestBody ContributeDto contributeDto,@RequestHeader(name = "X-Token") String token){
+        Integer userId = getUserIdFromToken(token);
+        Share contribute = shareService.contribute(userId, token, contributeDto);
+        return ResponseResult.success(contribute);
+    }
 
 
 
